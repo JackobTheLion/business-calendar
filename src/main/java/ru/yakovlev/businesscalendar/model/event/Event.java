@@ -1,7 +1,8 @@
-package ru.yakovlev.businesscalendar.model;
+package ru.yakovlev.businesscalendar.model.event;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.yakovlev.businesscalendar.model.user.User;
 
 import java.time.LocalDateTime;
 
@@ -21,11 +22,16 @@ public class Event {
 
     private LocalDateTime endDate;
 
+    @Enumerated(EnumType.STRING)
     private EventType eventType;
 
     private String name;
 
     private String description;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     @Override
     public String toString() {
@@ -34,7 +40,6 @@ public class Event {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 '}';
     }
 

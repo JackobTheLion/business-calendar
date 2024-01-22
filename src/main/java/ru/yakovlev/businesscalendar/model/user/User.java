@@ -1,4 +1,4 @@
-package ru.yakovlev.businesscalendar.model;
+package ru.yakovlev.businesscalendar.model.user;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package ru.yakovlev.businesscalendar.model;
+package ru.yakovlev.businesscalendar.model.event;
 
 public enum EventType {
     MEETING,
