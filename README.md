@@ -1,4 +1,4 @@
-# :handshake: Task management system
+# :handshake: Business calendar
 
 ### :question: Что это?
 Бэкенд приложения-календаря.
