@@ -127,8 +127,8 @@ class EventServiceTest {
     public void getMonthWorkingResult_Normal() {
         userRepository.save(owner);
         eventDtoRequest.setEventType(EventType.VACATION);
-        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 23, 0,0));
-        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 24, 0,0));
+        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 23, 0, 0));
+        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 24, 0, 0));
         eventService.addEvent(eventDtoRequest, principal);
 
         MonthsWorkingResult monthsWorkingResult = eventService.getMonthsWorkingResult(owner.getId(), 2024, 1);
@@ -142,8 +142,8 @@ class EventServiceTest {
     public void getMonthWorkingResult_Normal2() {
         userRepository.save(owner);
         eventDtoRequest.setEventType(EventType.MEETING);
-        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 23, 0,0));
-        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 24, 0,0));
+        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 23, 0, 0));
+        eventDtoRequest.setStartDate(LocalDateTime.of(2024, 1, 24, 0, 0));
         eventService.addEvent(eventDtoRequest, principal);
 
         MonthsWorkingResult monthsWorkingResult = eventService.getMonthsWorkingResult(owner.getId(), 2024, 1);

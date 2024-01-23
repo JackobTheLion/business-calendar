@@ -3,11 +3,11 @@ logging:
     org:
       springframework:
         orm:
-          jpa: INFO
+          jpa: info
           JpaTransactionManager: debug
         transaction: info
-    spring security: trace
-    web: trace
+    spring security: info
+    web: info
 spring:
   jpa:
     ##show-sql: true

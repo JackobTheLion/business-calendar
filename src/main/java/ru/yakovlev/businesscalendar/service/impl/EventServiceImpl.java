@@ -112,8 +112,8 @@ public class EventServiceImpl implements EventService {
      * Find user events with pagination by user ID
      *
      * @param userId
-     * @param from start position of pagination
-     * @param size size of page
+     * @param from   start position of pagination
+     * @param size   size of page
      * @return
      */
     @Override
@@ -141,13 +141,13 @@ public class EventServiceImpl implements EventService {
     /**
      * Provides working stats by month.
      * Statistics is calculated based on following: <p>
-     *  - if full working day: total days +1, total working hours +8 <p>
-     *  - if short working day: total days +1, total working hours +7 <p>
-     *  - if day off - days off +1 <p>
+     * - if full working day: total days +1, total working hours +8 <p>
+     * - if short working day: total days +1, total working hours +7 <p>
+     * - if day off - days off +1 <p>
      *
      * @param userId user whose stats is needed
-     * @param year year of stats
-     * @param month month of stats
+     * @param year   year of stats
+     * @param month  month of stats
      */
     @Override
     @Transactional(readOnly = true)
