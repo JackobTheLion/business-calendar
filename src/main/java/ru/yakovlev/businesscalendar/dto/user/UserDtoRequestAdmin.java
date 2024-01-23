@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.yakovlev.businesscalendar.validation.ValidationGroups.Create;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Schema(description = "Create and update user request by admin")
 public class UserDtoRequestAdmin extends UserDtoRequestUser {
 

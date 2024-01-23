@@ -106,7 +106,7 @@ public class EventServiceImpl implements EventService {
         LocalDate firstDayOfCheckMonth = LocalDate.of(year, month, 1);
         List<Event> eventsOff = eventRepository
                 .findByOwnerAndEventTypeIn(employee, List.of(VACATION, SICK_LEAVE));
-        Map<LocalDate, DayOff> publicHolidaysAndExtraWorkingDays = daysOffService.getDaysOff(year);
+        Map<LocalDate, Integer> publicHolidaysAndExtraWorkingDays = daysOffService.getDaysOff(year);
 
         Map<LocalDate, String> calendar = getCalendar(firstDayOfCheckMonth, publicHolidaysAndExtraWorkingDays);
         Integer totalBusinessDays = countTotalBusinessDays(calendar);
@@ -142,16 +142,16 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
-    private Map<LocalDate, String> getCalendar(LocalDate startDate, Map<LocalDate, DayOff> publicHolidaysAndExtraWorkingDays) {
+    private Map<LocalDate, String> getCalendar(LocalDate startDate, Map<LocalDate, Integer> publicHolidaysAndExtraWorkingDays) {
         Map<LocalDate, String> calendar = new HashMap<>();
         Month checkMonth = startDate.getMonth();
         LocalDate checkDate = startDate;
         while (checkDate.getMonth().equals(checkMonth)) {
-            DayOff dayOff = publicHolidaysAndExtraWorkingDays.get(checkDate);
-            if (dayOff != null) {
-                if (dayOff.getType() == 1) {
+            Integer type = publicHolidaysAndExtraWorkingDays.get(checkDate);
+            if (type != null) {
+                if (type == 1) {
                     calendar.put(checkDate, "non business day");
-                } else if (dayOff.getType() == 2) {
+                } else if (type == 2) {
                     calendar.put(checkDate, "short day");
                 }
             } else if (isBusinessDay(checkDate)) {

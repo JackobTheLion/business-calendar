@@ -8,7 +8,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import ru.yakovlev.businesscalendar.dto.event.DayOff;
 import ru.yakovlev.businesscalendar.service.DaysOffService;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,11 +30,11 @@ public class DaysOffServiceImpl implements DaysOffService {
     }
 
     @Override
-    public Map<LocalDate, DayOff> getDaysOff(Integer year) {
+    public Map<LocalDate, Integer> getDaysOff(Integer year) {
         String url = "/" + year + "/calendar.xml";
 
         String xml = rest.getForEntity(url, String.class).getBody();
-        Map<LocalDate, DayOff> daysOff = new HashMap<>();
+        Map<LocalDate, Integer> daysOff = new HashMap<>();
 
         try (Reader reader = new StringReader(xml)) {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -46,12 +45,7 @@ public class DaysOffServiceImpl implements DaysOffService {
             for (int i = 0; i < list.getLength(); i++) {
                 Element element = (Element) list.item(i);
                 LocalDate date = makeLocalDate(year, element.getAttribute("d"));
-
-                DayOff dayOff = DayOff.builder()
-                        .date(date)
-                        .type(Integer.parseInt(element.getAttribute("t")))
-                        .build();
-                daysOff.put(date, dayOff);
+                daysOff.put(date, Integer.parseInt(element.getAttribute("t")));
             }
         } catch (Exception ex) {
             log.error("Xml parsing error, xml: {}.", xml, ex);

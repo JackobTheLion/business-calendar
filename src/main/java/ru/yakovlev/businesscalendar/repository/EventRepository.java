@@ -6,7 +6,6 @@ import ru.yakovlev.businesscalendar.model.event.Event;
 import ru.yakovlev.businesscalendar.model.event.EventType;
 import ru.yakovlev.businesscalendar.model.user.User;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 

@@ -6,5 +6,5 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public interface DaysOffService {
-    Map<LocalDate, DayOff> getDaysOff(Integer year);
+    Map<LocalDate, Integer> getDaysOff(Integer year);
 }
