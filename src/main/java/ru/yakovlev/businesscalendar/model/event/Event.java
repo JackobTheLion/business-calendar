@@ -29,6 +29,9 @@ public class Event {
 
     private String description;
 
+    @Builder.Default
+    private Boolean deleted = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     private User owner;

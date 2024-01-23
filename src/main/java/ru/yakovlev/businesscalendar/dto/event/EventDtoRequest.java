@@ -1,6 +1,7 @@
 package ru.yakovlev.businesscalendar.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,24 +18,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Create event request")
 public class EventDtoRequest {
 
     @NotNull(groups = Create.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startDate;
+    protected LocalDateTime startDate;
 
     @NotNull(groups = Create.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endDate;
+    protected LocalDateTime endDate;
 
     @NotNull(groups = Create.class)
-    private EventType eventType;
+    protected EventType eventType;
 
     @NotBlank(groups = Create.class)
     @Size(max = 255)
-    private String name;
+    protected String name;
 
     @NotBlank(groups = Create.class)
     @Size(max = 2000)
-    private String description;
+    protected String description;
 }

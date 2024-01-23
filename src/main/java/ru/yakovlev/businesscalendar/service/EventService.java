@@ -3,6 +3,7 @@ package ru.yakovlev.businesscalendar.service;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoShortResponse;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.dto.user.MonthsWorkingResult;
 
 import java.security.Principal;
@@ -30,7 +31,7 @@ public interface EventService {
      * @param eventId
      * @return
      */
-    EventDtoFullResponse updateEventByUser(EventDtoRequest eventDtoRequest, Principal principal, Long eventId);
+    EventDtoFullResponse updateEventByUser(EventDtoUpdateRequest eventDtoRequest, Principal principal, Long eventId);
 
     /**
      * Updating event by admin
@@ -39,7 +40,7 @@ public interface EventService {
      * @param eventId
      * @return
      */
-    EventDtoFullResponse updateEventByAdmin(EventDtoRequest eventDtoRequest, Long eventId);
+    EventDtoFullResponse updateEventByAdmin(EventDtoUpdateRequest eventDtoRequest, Long eventId);
 
     /**
      * Find user events with pagination by user ID

@@ -8,9 +8,12 @@ import ru.yakovlev.businesscalendar.model.user.User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    List<Event> findByOwnerOrderByStartDate(User owner, Pageable page);
+    List<Event> findByOwnerAndDeletedOrderByStartDate(User owner, Pageable page, Boolean deleted);
 
-    List<Event> findByOwnerAndEventTypeIn(User owner, Collection<EventType> eventType);
+    List<Event> findByOwnerAndEventTypeInAndDeleted(User owner, Collection<EventType> eventType, Boolean deleted);
+
+    Optional<Event> findByIdAndDeleted(Long eventId, Boolean deleted);
 }

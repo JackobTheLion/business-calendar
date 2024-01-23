@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
-import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.dto.user.UserDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.user.UserDtoRequestAdmin;
 import ru.yakovlev.businesscalendar.service.EventService;
@@ -40,7 +40,7 @@ public class AdminController {
     @Operation(summary = "Updating event information",
             description = "Updating event information by administrator")
     @ResponseStatus(HttpStatus.OK)
-    public EventDtoFullResponse adminUpdateEvent(@RequestBody EventDtoRequest eventDtoRequest,
+    public EventDtoFullResponse adminUpdateEvent(@RequestBody EventDtoUpdateRequest eventDtoRequest,
                                                  @PathVariable @Min(1) Long eventId) {
         return eventService.updateEventByAdmin(eventDtoRequest, eventId);
     }

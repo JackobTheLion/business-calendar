@@ -21,6 +21,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.model.event.EventType;
 import ru.yakovlev.businesscalendar.model.user.User;
 import ru.yakovlev.businesscalendar.repository.EventRepository;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -109,7 +111,7 @@ class EventControllerTest {
     @Test
     @WithMockUser(username = "username")
     public void updateEvent_Normal() {
-        EventDtoRequest eventDtoRequest = prepareEvent();
+        EventDtoUpdateRequest eventDtoRequest = prepareUpdateEvent();
         String contentAsString = mockMvc.perform(post("/event")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDtoRequest)))
@@ -122,7 +124,7 @@ class EventControllerTest {
         EventDtoRequest updatedEventDtoRequest = prepareEvent();
         updatedEventDtoRequest.setName("updated name");
 
-        String response = mockMvc.perform(post("/event/" + eventDtoFullResponse.getId())
+        String response = mockMvc.perform(patch("/event/" + eventDtoFullResponse.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedEventDtoRequest)))
                 .andExpect(status().isOk())
@@ -136,7 +138,7 @@ class EventControllerTest {
     @SneakyThrows
     @Test
     public void updateEvent_NoRights() {
-        EventDtoRequest eventDtoRequest = prepareEvent();
+        EventDtoUpdateRequest eventDtoRequest = prepareUpdateEvent();
         mockMvc.perform(post("/event/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDtoRequest)))
@@ -151,6 +153,17 @@ class EventControllerTest {
                 .eventType(EventType.MEETING)
                 .name("event name")
                 .description("event description")
+                .build();
+    }
+
+    private EventDtoUpdateRequest prepareUpdateEvent() {
+        LocalDateTime now = LocalDateTime.now();
+        return EventDtoUpdateRequest.updateBuilder()
+                .startDate(now)
+                .endDate(now.minusHours(1))
+                .eventType(EventType.MEETING)
+                .name("Another name")
+                .description("Another description")
                 .build();
     }
 }

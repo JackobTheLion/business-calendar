@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.dto.user.MonthsWorkingResult;
 import ru.yakovlev.businesscalendar.exception.exceptions.AccessDeniedException;
 import ru.yakovlev.businesscalendar.model.event.EventType;
@@ -94,23 +95,23 @@ class EventServiceTest {
     public void updateEvent_Normal() {
         userRepository.save(owner);
         Long id = eventService.addEvent(eventDtoRequest, principal).getId();
-        String newName = "New name";
-        eventDtoRequest.setName(newName);
+        EventDtoUpdateRequest eventDtoUpdateRequest = getEventUpdateRequest();
+        eventDtoUpdateRequest.setName("New name");
 
-        EventDtoFullResponse updatedEvent = eventService.updateEventByUser(eventDtoRequest, principal, id);
+        EventDtoFullResponse updatedEvent = eventService.updateEventByUser(eventDtoUpdateRequest, principal, id);
 
-        assertEquals(newName, updatedEvent.getName());
+        assertEquals("New name", updatedEvent.getName());
     }
 
     @Test
     public void updateEvent_NoRights() {
         userRepository.save(owner);
         Long id = eventService.addEvent(eventDtoRequest, principal).getId();
-        eventDtoRequest.setName("New name");
+        EventDtoUpdateRequest eventDtoUpdateRequest = getEventUpdateRequest();
         principal = () -> "RANDOM NAME";
 
         assertThrows(AccessDeniedException.class, () ->
-                eventService.updateEventByUser(eventDtoRequest, principal, id));
+                eventService.updateEventByUser(eventDtoUpdateRequest, principal, id));
     }
 
     @Test
@@ -151,6 +152,17 @@ class EventServiceTest {
         assertEquals(17, monthsWorkingResult.getTotalBusinessDaysNumber());
         assertEquals(17, monthsWorkingResult.getActualBusinessDaysNumber());
         assertEquals(136, monthsWorkingResult.getWorkingTime());
+    }
+
+    private EventDtoUpdateRequest getEventUpdateRequest() {
+        EventDtoUpdateRequest eventDtoUpdateRequest = new EventDtoUpdateRequest();
+        eventDtoUpdateRequest.setStartDate(eventDtoRequest.getStartDate());
+        eventDtoUpdateRequest.setEndDate(eventDtoRequest.getStartDate());
+        eventDtoUpdateRequest.setName(eventDtoRequest.getName());
+        eventDtoUpdateRequest.setDescription(eventDtoRequest.getDescription());
+        eventDtoUpdateRequest.setEventType(eventDtoRequest.getEventType());
+
+        return eventDtoUpdateRequest;
     }
 
 }

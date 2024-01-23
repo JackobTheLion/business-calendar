@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoShortResponse;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.dto.user.MonthsWorkingResult;
 import ru.yakovlev.businesscalendar.exception.exceptions.AccessDeniedException;
 import ru.yakovlev.businesscalendar.exception.exceptions.NotFoundException;
@@ -66,7 +67,6 @@ public class EventServiceImpl implements EventService {
         return mapToFullDto(savedEvent);
     }
 
-
     /**
      * Updating event. Only owner can update event.
      *
@@ -77,9 +77,9 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional
-    public EventDtoFullResponse updateEventByUser(EventDtoRequest eventDtoRequest, Principal principal, Long eventId) {
-        Event eventToUpdate = findEvent(eventId);
-        if (eventToUpdate.getOwner().getUsername().equals(principal.getName())) {
+    public EventDtoFullResponse updateEventByUser(EventDtoUpdateRequest eventDtoRequest, Principal principal, Long eventId) {
+        Event eventToUpdate = findNotDeletedEvent(eventId);
+        if (isOwner(eventToUpdate, principal)) {
             updateEventFields(eventDtoRequest, eventToUpdate);
         } else {
             log.error("User {} cannot update event {}.", principal.getName(), eventToUpdate);
@@ -100,8 +100,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional
-    public EventDtoFullResponse updateEventByAdmin(EventDtoRequest eventDtoRequest, Long eventId) {
-        Event eventToUpdate = findEvent(eventId);
+    public EventDtoFullResponse updateEventByAdmin(EventDtoUpdateRequest eventDtoRequest, Long eventId) {
+        Event eventToUpdate = findNotDeletedEvent(eventId);
         updateEventFields(eventDtoRequest, eventToUpdate);
         Event updatedEvent = eventRepository.save(eventToUpdate);
         log.trace("Event updated: {}", updatedEvent);
@@ -122,7 +122,7 @@ public class EventServiceImpl implements EventService {
         log.trace("Looking for events of user {}.", userId);
         User owner = userService.findUserById(userId);
         final PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
-        List<Event> events = eventRepository.findByOwnerOrderByStartDate(owner, page);
+        List<Event> events = eventRepository.findByOwnerAndDeletedOrderByStartDate(owner, page, false);
         return events.stream().map(EventMapper::mapToShortDto).collect(Collectors.toList());
     }
 
@@ -135,7 +135,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public EventDtoFullResponse findEventById(Long eventId) {
-        return mapToFullDto(findEvent(eventId));
+        return mapToFullDto(findNotDeletedEvent(eventId));
     }
 
     /**
@@ -156,7 +156,7 @@ public class EventServiceImpl implements EventService {
         User employee = userService.findUserById(userId);
         LocalDate firstDayOfCheckMonth = LocalDate.of(year, month, 1);
         List<Event> eventsOff = eventRepository
-                .findByOwnerAndEventTypeIn(employee, List.of(VACATION, SICK_LEAVE));
+                .findByOwnerAndEventTypeInAndDeleted(employee, List.of(VACATION, SICK_LEAVE), false);
         Map<LocalDate, Integer> publicHolidaysAndExtraWorkingDays = daysOffService.getDaysOff(year);
 
         Map<LocalDate, String> calendar = getCalendar(firstDayOfCheckMonth, publicHolidaysAndExtraWorkingDays);
@@ -253,7 +253,7 @@ public class EventServiceImpl implements EventService {
         return date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY;
     }
 
-    private void updateEventFields(EventDtoRequest eventDtoRequest, Event eventToUpdate) {
+    private void updateEventFields(EventDtoUpdateRequest eventDtoRequest, Event eventToUpdate) {
         if (eventDtoRequest.getStartDate() != null) {
             eventToUpdate.setStartDate(eventDtoRequest.getStartDate());
         }
@@ -270,9 +270,21 @@ public class EventServiceImpl implements EventService {
             eventToUpdate.setName(eventDtoRequest.getName());
         }
 
+        if (eventDtoRequest.getDeleted() != null) {
+            eventToUpdate.setDeleted(eventDtoRequest.getDeleted());
+        }
+
         if (eventDtoRequest.getDescription() != null) {
             eventToUpdate.setDescription(eventDtoRequest.getDescription());
         }
+    }
+
+    private Event findNotDeletedEvent(Long eventId) {
+        log.trace("Searching event id {}.", eventId);
+        return eventRepository.findByIdAndDeleted(eventId, false).orElseThrow(() -> {
+            log.error("Event id {} not found.", eventId);
+            return new NotFoundException(String.format("Task id %s not found", eventId));
+        });
     }
 
     private Event findEvent(Long eventId) {
@@ -281,5 +293,9 @@ public class EventServiceImpl implements EventService {
             log.error("Event id {} not found.", eventId);
             return new NotFoundException(String.format("Task id %s not found", eventId));
         });
+    }
+
+    private boolean isOwner(Event event, Principal principal) {
+        return event.getOwner().getUsername().equals(principal.getName());
     }
 }

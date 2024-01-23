@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoShortResponse;
+import ru.yakovlev.businesscalendar.dto.event.EventDtoUpdateRequest;
 import ru.yakovlev.businesscalendar.dto.user.MonthsWorkingResult;
 import ru.yakovlev.businesscalendar.service.EventService;
 import ru.yakovlev.businesscalendar.validation.ValidationGroups;
@@ -40,9 +41,9 @@ public class EventController {
 
     @Operation(summary = "Updating event",
             description = "Updating event. Only owner can update")
-    @PostMapping("/{eventId}")
+    @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public EventDtoFullResponse updateEvent(@RequestBody @Validated(ValidationGroups.Update.class) EventDtoRequest eventDtoRequest,
+    public EventDtoFullResponse updateEvent(@RequestBody @Validated(ValidationGroups.Update.class) EventDtoUpdateRequest eventDtoRequest,
                                             Principal principal, @PathVariable Long eventId) {
         return eventService.updateEventByUser(eventDtoRequest, principal, eventId);
     }

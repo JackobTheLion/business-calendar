@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.events
     end_date    timestamp                                      NOT NULL,
     event_type  varchar                                        NOT NULL,
     name        varchar(255)                                   NOT NULL,
+    deleted     boolean                                        NOT NULL,
     description varchar(2000),
     owner_id    BIGINT                                         NOT NULL,
 
