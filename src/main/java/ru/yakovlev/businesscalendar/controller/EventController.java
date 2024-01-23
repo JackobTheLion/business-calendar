@@ -55,8 +55,8 @@ public class EventController {
         return eventService.findEventById(eventId);
     }
 
-    @Operation(summary = "Finding event",
-            description = "Finding event by ID.")
+    @Operation(summary = "Finding user events with pagination",
+            description = "from - start point of pagination, size - size of single page")
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<EventDtoShortResponse> findUserEvents(@RequestParam Long userId,
@@ -65,8 +65,8 @@ public class EventController {
         return eventService.findUserEvents(userId, from, size);
     }
 
-    @Operation(summary = "Finding event",
-            description = "Finding event by ID.")
+    @Operation(summary = "Getting month result",
+            description = "Getting month result")
     @GetMapping("/monthResult")
     @ResponseStatus(HttpStatus.OK)
     public MonthsWorkingResult getMonthResult(@RequestParam Long userId,

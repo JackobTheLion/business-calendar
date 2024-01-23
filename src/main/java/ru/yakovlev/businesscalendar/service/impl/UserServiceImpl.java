@@ -38,6 +38,12 @@ public class UserServiceImpl implements UserService {
         return this::findUserByName;
     }
 
+    /**
+     * Adding new user.
+     *
+     * @param userDtoRequestUser new user to add
+     * @return {@link UserDtoFullResponse} saved user
+     */
     @Override
     @Transactional
     public UserDtoFullResponse addUser(UserDtoRequestUser userDtoRequestUser) {
@@ -53,6 +59,13 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToFullDto(savedUser);
     }
 
+    /**
+     * Updating existing user. User cannot update role or enable account.
+     *
+     * @param userDtoRequestUser user information to update
+     * @param principal          current user
+     * @return {@link UserDtoFullResponse} saved user
+     */
     @Override
     @Transactional
     public UserDtoFullResponse updateUser(UserDtoRequestUser userDtoRequestUser, Principal principal) {
@@ -64,6 +77,12 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToFullDto(updateduser);
     }
 
+    /**
+     * User update by admin.
+     *
+     * @param userDtoRequestUser user information to update
+     * @return {@link UserDtoFullResponse} saved user
+     */
     @Override
     @Transactional
     public UserDtoFullResponse updateUserByAdmin(UserDtoRequestAdmin userDtoRequestUser, Long userId) {
@@ -85,6 +104,12 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToFullDto(updateduser);
     }
 
+    /**
+     * Finding user by id
+     *
+     * @param id user id
+     * @return {@link User}
+     */
     @Override
     @Transactional(readOnly = true)
     public User findUserById(Long id) {
@@ -92,6 +117,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException(String.format("User id %s not found", id)));
     }
 
+    /**
+     * Finding user by name
+     *
+     * @param userName username
+     * @return {@link User}
+     */
     @Override
     @Transactional(readOnly = true)
     public User findUserByName(String userName) {

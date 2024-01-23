@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yakovlev.businesscalendar.dto.event.DayOff;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoFullResponse;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoRequest;
 import ru.yakovlev.businesscalendar.dto.event.EventDtoShortResponse;
@@ -34,6 +33,10 @@ import static ru.yakovlev.businesscalendar.mapper.EventMapper.mapToFullDto;
 import static ru.yakovlev.businesscalendar.model.event.EventType.SICK_LEAVE;
 import static ru.yakovlev.businesscalendar.model.event.EventType.VACATION;
 
+/**
+ * Service responsible for working with events.
+ */
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -43,6 +46,13 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final DaysOffService daysOffService;
 
+    /**
+     * Adding new event by user. Current user is owner of the event.
+     *
+     * @param eventDtoRequest
+     * @param principal
+     * @return
+     */
     @Override
     @Transactional
     public EventDtoFullResponse addEvent(EventDtoRequest eventDtoRequest, Principal principal) {
@@ -56,6 +66,15 @@ public class EventServiceImpl implements EventService {
         return mapToFullDto(savedEvent);
     }
 
+
+    /**
+     * Updating event. Only owner can update event.
+     *
+     * @param eventDtoRequest
+     * @param principal
+     * @param eventId
+     * @return
+     */
     @Override
     @Transactional
     public EventDtoFullResponse updateEventByUser(EventDtoRequest eventDtoRequest, Principal principal, Long eventId) {
@@ -72,6 +91,13 @@ public class EventServiceImpl implements EventService {
         return mapToFullDto(updatedEvent);
     }
 
+    /**
+     * Updating event by admin
+     *
+     * @param eventDtoRequest
+     * @param eventId
+     * @return
+     */
     @Override
     @Transactional
     public EventDtoFullResponse updateEventByAdmin(EventDtoRequest eventDtoRequest, Long eventId) {
@@ -82,6 +108,14 @@ public class EventServiceImpl implements EventService {
         return mapToFullDto(updatedEvent);
     }
 
+    /**
+     * Find user events with pagination by user ID
+     *
+     * @param userId
+     * @param from start position of pagination
+     * @param size size of page
+     * @return
+     */
     @Override
     @Transactional(readOnly = true)
     public List<EventDtoShortResponse> findUserEvents(Long userId, int from, int size) {
@@ -92,12 +126,29 @@ public class EventServiceImpl implements EventService {
         return events.stream().map(EventMapper::mapToShortDto).collect(Collectors.toList());
     }
 
+    /**
+     * Find event by id to see detailed information.
+     *
+     * @param eventId
+     * @return
+     */
     @Override
     @Transactional(readOnly = true)
     public EventDtoFullResponse findEventById(Long eventId) {
         return mapToFullDto(findEvent(eventId));
     }
 
+    /**
+     * Provides working stats by month.
+     * Statistics is calculated based on following: <p>
+     *  - if full working day: total days +1, total working hours +8 <p>
+     *  - if short working day: total days +1, total working hours +7 <p>
+     *  - if day off - days off +1 <p>
+     *
+     * @param userId user whose stats is needed
+     * @param year year of stats
+     * @param month month of stats
+     */
     @Override
     @Transactional(readOnly = true)
     public MonthsWorkingResult getMonthsWorkingResult(Long userId, Integer year, Integer month) {

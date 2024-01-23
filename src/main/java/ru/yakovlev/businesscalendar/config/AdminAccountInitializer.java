@@ -34,7 +34,7 @@ public class AdminAccountInitializer implements CommandLineRunner {
     private String password;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         UserRole roleAdmin = userRoleRepository.findUserRoleByName("ROLE_ADMIN");
 
         User admin = User.builder()

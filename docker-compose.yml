@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+
+  calendar-service:
+    build:
+      dockerfile: Dockerfile
+    container_name: calendar-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - calendar-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://calendar-db:5432/calendar
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - ADMIN_LOGIN=admin
+      - ADMIN_PASSWORD=admin
+      - TOKEN_SECRET=51Ph61VOzrdwNvRa9FZclUpZRU160G1O
+      - TOKEN_DURATION=10m
+
+  calendar-db:
+    image: postgres:14.3-alpine
+    container_name: bb-db-container
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=calendar
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
